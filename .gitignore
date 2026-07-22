@@ -1,0 +1,39 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+resource_log.txt
+
+# Python
+__pycache__/
+*.pyc
+
+# Dependencies
+node_modules
+dist
+dist-ssr
+*.local
+
+# User uploads
+uploads/
+
+# Playwright browser install scripts
+node_modules/playwright-core/bin/*.ps1
+
+# Screenshots
+screenshots/
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
