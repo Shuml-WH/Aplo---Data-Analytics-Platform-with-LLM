@@ -128,7 +128,13 @@ ollama pull llama3.2
 
 ### 2.3 Starting the App (Local)
 
-You need to start **two terminals** — one for the backend, one for the frontend.
+**Option A: Single-click (Recommended)**
+
+Double-click **`start_local.bat`** in the `Development_code` folder. This opens two terminal windows — one for the backend, one for the frontend. Close them to stop.
+
+**Option B: Manual (two terminals)**
+
+If you prefer to run each service manually:
 
 **Terminal 1 — Flask Backend:**
 
