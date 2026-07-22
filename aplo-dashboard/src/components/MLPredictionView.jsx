@@ -85,7 +85,7 @@ export default function MLPredictionView({ datasetProfile, onNavigate, initialTa
         setLoadingInfo(true);
         setPredictError("");
         try {
-            const res = await fetch("http://localhost:5000/api/ml/results");
+            const res = await fetch("/api/ml/results");
             const data = await res.json();
             if (!res.ok || !data.success) {
                 setMlInfo(null);
@@ -104,7 +104,7 @@ export default function MLPredictionView({ datasetProfile, onNavigate, initialTa
         setLoadingTsInfo(true);
         setForecastError("");
         try {
-            const res = await fetch("http://localhost:5000/api/ml/timeseries-info");
+            const res = await fetch("/api/ml/timeseries-info");
             const data = await res.json();
             if (!res.ok || !data.success) throw new Error(data.error || "No time-series model found.");
             setTsInfo(data.info);
@@ -122,7 +122,7 @@ export default function MLPredictionView({ datasetProfile, onNavigate, initialTa
         setForecastError("");
         setForecastData(null);
         try {
-            const res = await fetch("http://localhost:5000/api/ml/forecast", {
+            const res = await fetch("/api/ml/forecast", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ periods: forecastPeriods })
@@ -228,7 +228,7 @@ export default function MLPredictionView({ datasetProfile, onNavigate, initialTa
             setWhatIfAggregateAll({});
             setWhatIfResult(null);
             setWhatIfBaselineResult(null);
-            fetch("http://localhost:5000/api/ml/predict-whatif", {
+            fetch("/api/ml/predict-whatif", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ model_key: selectedModel, features: baselineVals, aggregate_all: {} }),
@@ -270,7 +270,7 @@ export default function MLPredictionView({ datasetProfile, onNavigate, initialTa
         if (!selectedModel) return;
         setWhatIfRunning(true);
         try {
-            const res = await fetch("http://localhost:5000/api/ml/predict-whatif", {
+            const res = await fetch("/api/ml/predict-whatif", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -298,7 +298,7 @@ export default function MLPredictionView({ datasetProfile, onNavigate, initialTa
         setPredictError("");
 
         try {
-            const response = await fetch("http://localhost:5000/api/ml/predict-batch", {
+            const response = await fetch("/api/ml/predict-batch", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ model_key: selectedModel, group_by: groupCol }),
@@ -358,7 +358,7 @@ export default function MLPredictionView({ datasetProfile, onNavigate, initialTa
     const regroupPredictions = async (newGroupBy) => {
         if (!batchResults || !newGroupBy) return;
         try {
-            const res = await fetch("http://localhost:5000/api/ml/regroup", {
+            const res = await fetch("/api/ml/regroup", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ group_by: newGroupBy }),
@@ -384,7 +384,7 @@ export default function MLPredictionView({ datasetProfile, onNavigate, initialTa
     const downloadCSV = async () => {
         if (!selectedModel) return;
         try {
-            const res = await fetch(`http://localhost:5000/api/ml/export-predictions?model_key=${selectedModel}`);
+            const res = await fetch(`/api/ml/export-predictions?model_key=${selectedModel}`);
             if (!res.ok) throw new Error("Download failed");
             const blob = await res.blob();
             const url = window.URL.createObjectURL(blob);

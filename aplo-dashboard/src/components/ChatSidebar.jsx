@@ -21,14 +21,14 @@ export default function ChatSidebar({ onNavigate, onChartGenerated }) {
     setLoading(true);
 
     try {
-        const response = await fetch("http://localhost:5000/api/chat-stream", {
+        const response = await fetch("/api/chat-stream", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ query: trimmed }),
         });
 
         if (!response.ok || !response.body) {
-        const fallback = await fetch("http://localhost:5000/api/chat", {
+        const fallback = await fetch("/api/chat", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ query: trimmed }),

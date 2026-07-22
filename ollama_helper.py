@@ -3,8 +3,11 @@ from langchain_core.prompts import ChatPromptTemplate
 import pandas as pd
 import re
 import json
+import os
 
-model = OllamaLLM(model="llama3.2", num_ctx=4096, num_thread=12, streaming=True)
+OLLAMA_BASE_URL = os.environ.get("OLLAMA_BASE_URL", "http://localhost:11434")
+
+model = OllamaLLM(model="llama3.2", base_url=OLLAMA_BASE_URL, num_ctx=4096, num_thread=12, streaming=True)
 
 BASE_TEMPLATE = """You are a data analyst helping non-technical users on the Aplo Data Analytics Platform.
 

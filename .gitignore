@@ -21,6 +21,9 @@ dist-ssr
 # User uploads
 uploads/
 
+# Docker volumes
+ollama_data/
+
 # Playwright browser install scripts
 node_modules/playwright-core/bin/*.ps1
 

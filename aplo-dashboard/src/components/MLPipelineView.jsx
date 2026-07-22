@@ -96,7 +96,7 @@ export default function MLPipelineView({ datasetProfile, onNavigate }) {
     React.useEffect(() => {
         const restoreState = async () => {
             try {
-                const res = await fetch("http://localhost:5000/api/ml/pipeline-state");
+                const res = await fetch("/api/ml/pipeline-state");
                 const data = await res.json();
                 if (!data.success) return;
 
@@ -187,7 +187,7 @@ export default function MLPipelineView({ datasetProfile, onNavigate }) {
     setTrainResult(null);
 
     try {
-        const initRes = await fetch("http://localhost:5000/api/ml/initialize", {
+        const initRes = await fetch("/api/ml/initialize", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -204,7 +204,7 @@ export default function MLPipelineView({ datasetProfile, onNavigate }) {
         setTaskType(initData.task_type || "");
         setSelectedModels(getDefaultModelsForTask(initData.task_type));
 
-        const planRes = await fetch("http://localhost:5000/api/ml/preprocessing-plan", {
+        const planRes = await fetch("/api/ml/preprocessing-plan", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -258,7 +258,7 @@ export default function MLPipelineView({ datasetProfile, onNavigate }) {
     setTrainingStep("Initializing...");
 
     try {
-        const response = await fetch("http://localhost:5000/api/ml/train", {
+        const response = await fetch("/api/ml/train", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -350,7 +350,7 @@ export default function MLPipelineView({ datasetProfile, onNavigate }) {
         setTsTrainingStep("Initializing...");
 
         try {
-            const response = await fetch("http://localhost:5000/api/ml/train-timeseries", {
+            const response = await fetch("/api/ml/train-timeseries", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -431,7 +431,7 @@ export default function MLPipelineView({ datasetProfile, onNavigate }) {
 
         try { 
             const modelKey = selectedEvalModel || trainResult?.best_model_key; 
-            const res = await fetch("http://localhost:5000/api/ml/export-model", { 
+            const res = await fetch("/api/ml/export-model", { 
             method: "POST", 
             headers: { "Content-Type": "application/json" }, 
             body: JSON.stringify({ model_key: modelKey }), 

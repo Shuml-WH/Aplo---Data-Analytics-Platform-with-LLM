@@ -32,7 +32,7 @@ export default function DataLoadingView({ datasetProfile, setDatasetProfile }) {
     async function fetchExistingProfile() {
         try {
         console.log("[init] fetching existing dataset profile");
-        const res = await fetch("http://localhost:5000/api/dataset-profile");
+        const res = await fetch("/api/dataset-profile");
         
         if (!res.ok) {
             // 404 means "no active dataset", which is fine for a fresh start
@@ -55,7 +55,7 @@ export default function DataLoadingView({ datasetProfile, setDatasetProfile }) {
 
     async function fetchAuditTrail() {
         try {
-            const res = await fetch("http://localhost:5000/api/audit-trail");
+            const res = await fetch("/api/audit-trail");
             if (!res.ok) {
             console.warn("[audit] status:", res.status);
             return;
@@ -99,7 +99,7 @@ export default function DataLoadingView({ datasetProfile, setDatasetProfile }) {
 
     try {
         console.log("[upload] sending fetch to /api/upload-csv");
-        const response = await fetch("http://localhost:5000/api/upload-csv", {
+        const response = await fetch("/api/upload-csv", {
             method: "POST",
             body: formData
         });
@@ -124,7 +124,7 @@ export default function DataLoadingView({ datasetProfile, setDatasetProfile }) {
         setDatasetProfile(data);
         
         try {
-            const resAudit = await fetch("http://localhost:5000/api/audit-trail");
+            const resAudit = await fetch("/api/audit-trail");
             const auditData = await resAudit.json();
             if (resAudit.ok && auditData.success && Array.isArray(auditData.events)) {
             setAuditEvents(auditData.events);
@@ -159,7 +159,7 @@ export default function DataLoadingView({ datasetProfile, setDatasetProfile }) {
     }
 
     try {
-        const res = await fetch("http://localhost:5000/api/reset-dataset", {
+        const res = await fetch("/api/reset-dataset", {
         method: "POST",
         headers: { "Content-Type": "application/json" }
         });
@@ -239,7 +239,7 @@ export default function DataLoadingView({ datasetProfile, setDatasetProfile }) {
 
     setIsAutoCleaning(true);
     try {
-        const res = await fetch("http://localhost:5000/api/auto-clean", {
+        const res = await fetch("/api/auto-clean", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -264,7 +264,7 @@ export default function DataLoadingView({ datasetProfile, setDatasetProfile }) {
 
         // Refresh audit trail
         try {
-        const resAudit = await fetch("http://localhost:5000/api/audit-trail");
+        const resAudit = await fetch("/api/audit-trail");
         const auditData = await resAudit.json();
         if (resAudit.ok && auditData.success && Array.isArray(auditData.events)) {
             setAuditEvents(auditData.events);
@@ -295,7 +295,7 @@ export default function DataLoadingView({ datasetProfile, setDatasetProfile }) {
 
         setIsUndoing(true);
         try {
-        const res = await fetch("http://localhost:5000/api/undo-auto-clean", {
+        const res = await fetch("/api/undo-auto-clean", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
         });
@@ -315,7 +315,7 @@ export default function DataLoadingView({ datasetProfile, setDatasetProfile }) {
 
         // Refresh audit trail
         try {
-            const resAudit = await fetch("http://localhost:5000/api/audit-trail");
+            const resAudit = await fetch("/api/audit-trail");
             const auditData = await resAudit.json();
             if (resAudit.ok && auditData.success && Array.isArray(auditData.events)) {
             setAuditEvents(auditData.events);

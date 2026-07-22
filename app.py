@@ -2004,6 +2004,8 @@ def ml_forecast():
 
 if __name__ == "__main__":
     from resource_monitor import start_background_monitor
+    import os
+    debug_mode = os.environ.get("FLASK_DEBUG", "1") == "1"
     start_background_monitor(interval=30, output_file="resource_log.txt")
-    app.run(debug=True, port=5000, threaded=True)
+    app.run(debug=debug_mode, host="0.0.0.0", port=5000, threaded=True)
     

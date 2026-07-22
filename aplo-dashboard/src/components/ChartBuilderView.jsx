@@ -35,7 +35,7 @@ export default function ChartBuilderView(props) {
         try {
             setIsLoadingDefaultRange(true);
 
-            const res = await fetch("http://localhost:5000/api/date-range-profile", {
+            const res = await fetch("/api/date-range-profile", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ date_column: dateColumn })
@@ -247,7 +247,7 @@ export default function ChartBuilderView(props) {
             : null;
 
         try {
-            const res = await fetch("http://localhost:5000/api/build-chart", {
+            const res = await fetch("/api/build-chart", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({

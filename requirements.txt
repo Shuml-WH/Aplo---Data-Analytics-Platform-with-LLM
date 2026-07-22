@@ -1,0 +1,12 @@
+flask
+flask-cors
+pandas
+numpy
+scikit-learn
+statsmodels
+plotly
+langchain-ollama
+langchain-core
+python-dateutil
+xgboost
+psutil
