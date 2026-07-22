@@ -111,13 +111,13 @@ export default function DataLoadingView({ datasetProfile, setDatasetProfile }) {
             data = await response.json();
         } catch (e) {
             console.error("[upload] response.json() failed:", e);
-            // throw new Error(`Server returned non-JSON response (status ${response.status})`);
         }
 
         console.log("[upload] parsed JSON:", data);
 
-        if (!response.ok || !data.success) {
-            throw new Error(data.error || `Upload failed with status ${response.status}`);
+        if (!response.ok || !data || !data.success) {
+            const msg = (data && data.error) || `Upload failed with status ${response.status}`;
+            throw new Error(msg);
         }
 
         console.log("[upload] setting datasetProfile now");
