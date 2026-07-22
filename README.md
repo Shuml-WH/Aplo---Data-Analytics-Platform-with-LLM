@@ -29,8 +29,20 @@ cd aplo-dashboard
 npm install
 ```
 
-Terminal 1: `python app.py` — backend at `http://localhost:5000`
-Terminal 2: `npm run dev` — frontend at `http://localhost:5173`
+**Terminal 1 — Backend:**
+```bash
+python app.py
+```
+
+Backend starts at `http://localhost:5000`.
+
+**Terminal 2 — Frontend:**
+```bash
+cd aplo-dashboard
+npm run dev
+```
+
+Frontend starts at `http://localhost:5173`.
 
 Requires Python 3.10+, Node 18+, and Ollama with `llama3.2` model.
 
