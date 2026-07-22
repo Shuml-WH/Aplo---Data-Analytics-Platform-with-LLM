@@ -39,6 +39,12 @@ Aplo is a web-based data analytics platform designed for non-technical users. It
 
 ### 1.3 Prerequisites
 
+**Option A — Docker:**
+- **Docker Desktop** installed and running (see [What is Docker?](#what-is-docker) below)
+- ~3.5 GB free disk space for the Ollama model
+- ~1 GB free disk space for Docker images
+
+**Option B — Local Installation:**
 - **Python 3.10+** with pip
 - **Node.js 18+** with npm
 - **Ollama** (for AI chat features) with the `llama3.2` model installed
@@ -47,13 +53,62 @@ Aplo is a web-based data analytics platform designed for non-technical users. It
 
 ## 2. Getting Started
 
-### 2.1 Installation
+You have two ways to run the Aplo platform: **Docker** (recommended for simplicity) or **Local Installation** (for development).
+
+### What is Docker?
+
+Docker packages each component (backend, frontend, AI model) into isolated "containers" that run consistently on any machine. Instead of manually installing Python, Node.js, Ollama, and all dependencies, you install just one tool — Docker Desktop — and run a single command to start everything.
+
+**Download Docker Desktop:** [https://www.docker.com/products/docker-desktop/](https://www.docker.com/products/docker-desktop/)
+
+- **Windows:** Run the installer, ensure **WSL2** is selected during setup, then restart
+- **macOS:** Run the installer and follow the prompts
+- **Linux:** Docker Desktop is optional — install `docker` and `docker compose` via your package manager, e.g. `sudo apt install docker.io docker-compose-v2`
+
+After installation, open Docker Desktop and wait for the engine to start (the whale icon in your system tray or menu bar should be running).
+
+### 2.1 Option A: Docker (Recommended)
+
+**Step 1: Start the platform**
+
+Open a terminal in the `Development_code` directory and run:
+
+```bash
+cd Development_code
+docker compose up -d
+```
+
+On the first run, Docker will:
+1. Build the backend image (Python 3.13)
+2. Build the frontend image (Node 22 → Nginx)
+3. Start the Ollama LLM server
+4. Automatically pull the `llama3.2` model (~2 GB download)
+
+This takes a few minutes on first launch.
+
+**Step 2: Open the app**
+
+Navigate to `http://localhost:3000` in your browser.
+
+**Step 3: Stop the platform**
+
+```bash
+docker compose down
+```
+
+To also remove data volumes (model + uploads):
+
+```bash
+docker compose down -v
+```
+
+### 2.2 Option B: Local Installation
 
 **Step 1: Install Python dependencies**
 
 ```bash
 cd Development_code
-pip install flask flask-cors pandas scikit-learn plotly langchain-ollama langchain-core xgboost statsmodels psutil
+pip install -r requirements.txt
 ```
 
 **Step 2: Install Node.js dependencies**
@@ -71,7 +126,7 @@ Download Ollama from [https://ollama.ai](https://ollama.ai), then pull the requi
 ollama pull llama3.2
 ```
 
-### 2.2 Starting the App
+### 2.3 Starting the App (Local)
 
 You need to start **two terminals** — one for the backend, one for the frontend.
 
@@ -97,9 +152,12 @@ The frontend will start at `http://localhost:5173`.
 
 ![Terminal running Vite frontend](screenshots/ch02_vite_terminal.png)
 
-### 2.3 Opening the App
+### 2.4 Opening the App
 
-Open your browser and navigate to `http://localhost:5173`. You should see the Aplo home page.
+- **Docker method:** Navigate to `http://localhost:3000`
+- **Local method:** Navigate to `http://localhost:5173`
+
+You should see the Aplo home page.
 
 ![Aplo home page](screenshots/ch02_home_page.png)
 
@@ -686,14 +744,20 @@ Click the **AI Chat** button at the top right corner of the UI in case the chat 
 | "model not found" | llama3.2 not pulled | Run: `ollama pull llama3.2` |
 | Port 5000 in use | Another process using the port | Kill the process or change the port in `app.py` |
 | Port 5173 in use | Another Vite instance running | Kill existing Vite process or use `--port` flag |
+| **Docker: Upload fails "Cannot read properties of undefined"** | Nginx `client_max_body_size` too small for large CSV | Ensure you have the latest `nginx.conf` with `client_max_body_size 50m`, then rebuild frontend |
+| **Docker: Backend remains unhealthy** | Flask can't connect to Ollama | Check `docker compose logs backend` — ensure `OLLAMA_BASE_URL=http://ollama:11434` is set |
+| **Docker: pull-model fails "could not connect"** | Model pull container can't reach Ollama server | Ensure `OLLAMA_HOST=http://ollama:11434` env var is set on pull-model service |
+| **Docker: Port 11434 already in use** | Local Ollama conflicts with Docker | Local Ollama takes priority — remove port mapping in `docker-compose.yml` (internal networking works without it) |
+| **Docker: Containers not starting** | Docker Desktop not running or WSL issue | Open Docker Desktop, ensure it's running, then try `wsl --shutdown` and retry |
 
 ### Getting Help
 
 If you encounter issues not listed above:
-1. Check the terminal output for error messages
-2. Verify all dependencies are installed (`pip install ...` and `npm install`)
-3. Ensure Ollama is running and the model is pulled
-4. Try resetting the dataset and starting over
+1. **Docker:** Run `docker compose logs <service>` (e.g., `docker compose logs backend`) to see container logs
+2. **Local:** Check the terminal output for error messages
+3. Verify all dependencies are installed (`pip install ...` and `npm install`)
+4. Ensure Ollama is running and the model is pulled
+5. Try resetting the dataset and starting over
 
 ---
 
