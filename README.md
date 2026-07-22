@@ -58,4 +58,4 @@ Requires Python 3.10+, Node 18+, and Ollama with `llama3.2` model.
 
 ## Usage
 
-Refer to **`USER_MANUAL.md`** for detailed instructions on uploading data, building charts, training ML models, and using the AI chat assistant.
+Refer to **`USER_MANUAL.md`** or **`USER_MANUAL.pdf`** for detailed instructions on uploading data, building charts, training ML models, and using the AI chat assistant.
