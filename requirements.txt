@@ -8,5 +8,5 @@ plotly==6.3.0
 langchain-ollama==1.0.1
 langchain-core==1.2.22
 python-dateutil==2.9.0.post0
-xgboost==1.6.2
+xgboost>=2.1.0
 psutil==7.0.0
