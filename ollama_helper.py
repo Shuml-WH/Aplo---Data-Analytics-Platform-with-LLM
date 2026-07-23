@@ -43,7 +43,7 @@ INSTRUCTIONS:
 1. Pick the correct column names from the dataset above.
 2. Output EXACTLY this format (the chart block must be on ONE line, at the VERY END of your response):
 
-<chart>{"chart_type": "bar", "x": "region", "y": ["sales_revenue_usd"], "agg": "sum"}</chart>
+<chart>{{"chart_type": "bar", "x": "region", "y": ["sales_revenue_usd"], "agg": "sum"}}</chart>
 
 The text BEFORE the chart block should be 1-2 sentences explaining what the chart shows.
 The chart block <chart>...</chart> MUST be the very last thing in your response. Nothing after it.
@@ -63,10 +63,10 @@ For GAUGE charts, add these optional fields:
 - target_agg: "sum", "mean", or "median" (how to aggregate target period values; defaults to "sum")
 
 Example gauge with previous period target (compares to last year):
-<chart>{"chart_type": "gauge", "y": ["sales_revenue_usd"], "agg": "sum", "time_period": "last_month", "target_source": "previous_period", "target_period": "last_year", "target_agg": "sum", "factor": 1.0, "factor_mode": "multiply"}</chart>
+<chart>{{"chart_type": "gauge", "y": ["sales_revenue_usd"], "agg": "sum", "time_period": "last_month", "target_source": "previous_period", "target_period": "last_year", "target_agg": "sum", "factor": 1.0, "factor_mode": "multiply"}}</chart>
 
 Example gauge with manual target:
-<chart>{"chart_type": "gauge", "y": ["sales_revenue_usd"], "agg": "sum", "target_source": "manual", "target": 500000}</chart>
+<chart>{{"chart_type": "gauge", "y": ["sales_revenue_usd"], "agg": "sum", "target_source": "manual", "target": 500000}}</chart>
 
 IMPORTANT: The <chart> block is REQUIRED. You MUST include it. Output it exactly as shown above with real column names from the dataset."""
 
