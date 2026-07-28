@@ -15,10 +15,14 @@ cd Aplo---Data-Analytics-Platform-with-LLM/Script/Development_code
 
 ```bash
 cd Aplo---Data-Analytics-Platform-with-LLM/Script/Development_code
-docker compose up -d
+docker compose up -d --build
 ```
 
 Open `http://localhost:3000`. Requires Docker Desktop.
+
+**Ports:** Frontend is at `:3000`, Backend API at `:5001` (mapped from container port 5000).  
+**Ollama:** The backend tries your local Ollama first (`host.docker.internal:11434`) and falls back to the Docker container's Ollama if unavailable.  
+**Configuration:** Copy `.env.example` to `.env` to adjust ports or Ollama URL.
 
 **Option B — Local**
 

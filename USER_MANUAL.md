@@ -86,6 +86,10 @@ On the first run, Docker will:
 
 This takes a few minutes on first launch.
 
+**Ports:** The backend API is exposed on host port **5001** (mapped from container port 5000). The frontend is on host port **3000**. To change these, edit `HOST_BACKEND_PORT` / `HOST_FRONTEND_PORT` in `.env` before running.
+
+**Ollama priority:** The backend checks for a local Ollama on your host first (`host.docker.internal:11434`). If none is found (e.g., Ollama not installed locally), it uses the Ollama running inside Docker. Set `OLLAMA_BASE_URL=http://ollama:11434` in `.env` to always use the Docker Ollama.
+
 **Step 2: Open the app**
 
 Navigate to `http://localhost:3000` in your browser.
@@ -748,12 +752,15 @@ Click the **AI Chat** button at the top right corner of the UI in case the chat 
 | "No trained model available" | Trying to predict before training | Train an ML model first |
 | Chat not responding | Ollama not running | Start Ollama: `ollama serve` |
 | "model not found" | llama3.2 not pulled | Run: `ollama pull llama3.2` |
-| Port 5000 in use | Another process using the port | Kill the process or change the port in `app.py` |
-| Port 5173 in use | Another Vite instance running | Kill existing Vite process or use `--port` flag |
+| Port 5000 in use (local) | Another process using the port | Change the port in `app.py` or use Docker (port 5001 on host) |
+| Port 5173 in use (local) | Another Vite instance running | Kill existing Vite process or use `--port` flag |
+| Port 3000 in use (Docker) | Another service on that port | Change `HOST_FRONTEND_PORT` in `.env` and rebuild |
+| Port 5001 in use (Docker) | Another service on that port | Change `HOST_BACKEND_PORT` in `.env` and rebuild |
 | **Docker: Upload fails "Cannot read properties of undefined"** | Nginx `client_max_body_size` too small for large CSV | Ensure you have the latest `nginx.conf` with `client_max_body_size 50m`, then rebuild frontend |
-| **Docker: Backend remains unhealthy** | Flask can't connect to Ollama | Check `docker compose logs backend` — ensure `OLLAMA_BASE_URL=http://ollama:11434` is set |
+| **Docker: Backend becomes unhealthy after container restart** | Nginx cached old backend IP | Fixed — nginx now re-resolves DNS every 10s via `resolver` directive |
+| **Docker: Backend remains unhealthy** | Flask can't reach Ollama | Check `docker compose logs backend`. Local Ollama is tried first, then Docker's — ensure one of them is running |
 | **Docker: pull-model fails "could not connect"** | Model pull container can't reach Ollama server | Ensure `OLLAMA_HOST=http://ollama:11434` env var is set on pull-model service |
-| **Docker: Port 11434 already in use** | Local Ollama conflicts with Docker | Local Ollama takes priority — remove port mapping in `docker-compose.yml` (internal networking works without it) |
+| **Docker: Port 11434 already in use** | Local Ollama conflicts with Docker | Local Ollama takes priority — no action needed; if you want to silence the conflict, stop the local Ollama |
 | **Docker: Containers not starting** | Docker Desktop not running or WSL issue | Open Docker Desktop, ensure it's running, then try `wsl --shutdown` and retry |
 
 ### Getting Help
