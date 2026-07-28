@@ -147,7 +147,7 @@ cd Development_code
 python app.py
 ```
 
-The backend will start at `http://localhost:5000`.
+The backend will start at `http://localhost:5001`.
 
 ![Terminal running Flask backend](screenshots/ch02_flask_terminal.png)
 

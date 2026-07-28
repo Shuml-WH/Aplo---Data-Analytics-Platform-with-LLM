@@ -38,7 +38,7 @@ npm install
 start_local.bat
 ```
 
-This launches both backend (`http://localhost:5000`) and frontend (`http://localhost:5173`) in separate windows. Close them to stop.
+This launches both backend (`http://localhost:5001`) and frontend (`http://localhost:5173`) in separate windows. Close them to stop.
 
 Requires Python 3.10+, Node 18+, and Ollama with `llama3.2` model.
 
