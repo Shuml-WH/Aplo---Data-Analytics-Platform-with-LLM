@@ -200,15 +200,11 @@ export default function MLPredictionView({ datasetProfile, onNavigate, initialTa
 
     const getBaselineValues = React.useCallback(() => {
         const values = {};
+        const aggAll = {};
         trainedFeatureColumns.forEach((col) => {
             if (isCategoricalColumn(col)) {
-                const opts = getCategoricalOptions(col);
-                if (whatIfStartingPoint === "mode") {
-                    const profile = getColumnProfile(col);
-                    values[col] = profile?.top || opts[0] || "";
-                } else {
-                    values[col] = opts[0] || "";
-                }
+                values[col] = "__ALL__";
+                aggAll[col] = true;
             } else {
                 const profile = getColumnProfile(col);
                 if (whatIfStartingPoint === "mode") {
@@ -218,26 +214,42 @@ export default function MLPredictionView({ datasetProfile, onNavigate, initialTa
                 }
             }
         });
-        return values;
+        return { values, aggAll };
     }, [trainedFeatureColumns, whatIfStartingPoint, datasetColumnProfiles]);
 
     React.useEffect(() => {
         if (mlInfo && selectedModel) {
-            const baselineVals = getBaselineValues();
+            const { values: baselineVals, aggAll } = getBaselineValues();
             setWhatIfValues(baselineVals);
-            setWhatIfAggregateAll({});
+            setWhatIfAggregateAll(aggAll);
             setWhatIfResult(null);
             setWhatIfBaselineResult(null);
             fetch("/api/ml/predict-whatif", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ model_key: selectedModel, features: baselineVals, aggregate_all: {} }),
+                body: JSON.stringify({ model_key: selectedModel, features: baselineVals, aggregate_all: aggAll }),
             })
                 .then((r) => r.json())
                 .then((data) => { if (data.success) setWhatIfBaselineResult(data); })
                 .catch(() => {});
         }
     }, [mlInfo, selectedModel, whatIfStartingPoint]);
+
+    const resetWhatIf = React.useCallback(() => {
+        const { values: baselineVals, aggAll } = getBaselineValues();
+        setWhatIfValues(baselineVals);
+        setWhatIfAggregateAll(aggAll);
+        setWhatIfResult(null);
+        setWhatIfBaselineResult(null);
+        fetch("/api/ml/predict-whatif", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ model_key: selectedModel, features: baselineVals, aggregate_all: aggAll }),
+        })
+            .then((r) => r.json())
+            .then((data) => { if (data.success) setWhatIfBaselineResult(data); })
+            .catch(() => {});
+    }, [getBaselineValues, selectedModel]);
 
     const categoricalColumns = trainedFeatureColumns.filter((col) => isCategoricalColumn(col));
 
@@ -678,8 +690,8 @@ export default function MLPredictionView({ datasetProfile, onNavigate, initialTa
                                             </div>
                                         );
                                     })}
-                                    <button className="btn btn-primary" style={{ width: "100%", marginTop: 8 }} onClick={runWhatIf} disabled={whatIfRunning || !selectedModel}>
-                                        {whatIfRunning ? "Predicting..." : "Run Scenario"}
+                                    <button className="btn btn-ghost" style={{ width: "100%", marginTop: 8 }} onClick={resetWhatIf}>
+                                        Reset to Default
                                     </button>
                                 </div>
 
@@ -1006,35 +1018,42 @@ export default function MLPredictionView({ datasetProfile, onNavigate, initialTa
                                             <div className="form-group" style={{ margin: 0, minWidth: 200 }}>
                                                 <label className="small ml-prediction-label">Forecast Periods</label>
                                                 <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                                                    <input
-                                                        type="range"
-                                                        min={7}
-                                                        max={365}
-                                                        value={forecastPeriods}
-                                                        onChange={(e) => setForecastPeriods(parseInt(e.target.value))}
-                                                        style={{ flex: 1 }}
-                                                    />
-                                                    <input
-                                                        type="number"
-                                                        min={7}
-                                                        max={365}
-                                                        value={forecastPeriodsInput}
-                                                        onChange={(e) => setForecastPeriodsInput(e.target.value)}
-                                                        onBlur={() => {
-                                                            const v = parseInt(forecastPeriodsInput);
-                                                            if (!isNaN(v) && v >= 7 && v <= 365) setForecastPeriods(v);
-                                                            else setForecastPeriodsInput(String(forecastPeriods));
-                                                        }}
-                                                        onKeyDown={(e) => {
-                                                            if (e.key === "Enter") {
-                                                                const v = parseInt(forecastPeriodsInput);
-                                                                if (!isNaN(v) && v >= 7 && v <= 365) setForecastPeriods(v);
-                                                                else setForecastPeriodsInput(String(forecastPeriods));
-                                                            }
-                                                        }}
-                                                        style={{ width: "60px", padding: "4px 8px", background: "var(--bg-card-soft)", border: "1px solid var(--border-soft)", borderRadius: "6px", color: "var(--accent)", fontWeight: 700, fontSize: "0.9rem", textAlign: "center" }}
-                                                    />
-                                                    <span style={{ fontSize: "0.8rem", color: "var(--text-soft)" }}>days</span>
+                                                    {(() => {
+                                                        const freq = tsInfo?.frequency || "D";
+                                                        const freqMax = freq === "W" ? 104 : freq === "M" ? 60 : 365;
+                                                        const freqUnit = freq === "W" ? "weeks" : freq === "M" ? "months" : "days";
+                                                        return <>
+                                                            <input
+                                                                type="range"
+                                                                min={1}
+                                                                max={freqMax}
+                                                                value={forecastPeriods}
+                                                                onChange={(e) => setForecastPeriods(parseInt(e.target.value))}
+                                                                style={{ flex: 1 }}
+                                                            />
+                                                            <input
+                                                                type="number"
+                                                                min={1}
+                                                                max={freqMax}
+                                                                value={forecastPeriodsInput}
+                                                                onChange={(e) => setForecastPeriodsInput(e.target.value)}
+                                                                onBlur={() => {
+                                                                    const v = parseInt(forecastPeriodsInput);
+                                                                    if (!isNaN(v) && v >= 1 && v <= freqMax) setForecastPeriods(v);
+                                                                    else setForecastPeriodsInput(String(forecastPeriods));
+                                                                }}
+                                                                onKeyDown={(e) => {
+                                                                    if (e.key === "Enter") {
+                                                                        const v = parseInt(forecastPeriodsInput);
+                                                                        if (!isNaN(v) && v >= 1 && v <= freqMax) setForecastPeriods(v);
+                                                                        else setForecastPeriodsInput(String(forecastPeriods));
+                                                                    }
+                                                                }}
+                                                                style={{ width: "60px", padding: "4px 8px", background: "var(--bg-card-soft)", border: "1px solid var(--border-soft)", borderRadius: "6px", color: "var(--accent)", fontWeight: 700, fontSize: "0.9rem", textAlign: "center" }}
+                                                            />
+                                                            <span style={{ fontSize: "0.8rem", color: "var(--text-soft)" }}>{freqUnit}</span>
+                                                        </>;
+                                                    })()}
                                                 </div>
                                             </div>
                                             <button className="btn btn-primary" onClick={runForecast} disabled={forecastRunning || !tsInfo} style={{ marginTop: 16 }}>

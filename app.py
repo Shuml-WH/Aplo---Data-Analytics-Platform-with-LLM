@@ -1909,7 +1909,7 @@ def ml_train_timeseries():
                 strategy="Multi-model time-series comparison",
             )
 
-            yield f"data: {json.dumps({'type': 'complete', 'success': True, 'data': {
+            complete_data = {
                 'task_type': 'timeseries',
                 'target_column': target_column,
                 'datetime_column': datetime_column,
@@ -1921,7 +1921,8 @@ def ml_train_timeseries():
                 'model_type': model_types,
                 'results': results_array,
                 'best_model_key': best_result['model_type'],
-            }}, cls=SafeJsonEncoder)}\n\n"
+            }
+            yield f"data: {json.dumps({'type': 'complete', 'success': True, 'data': complete_data}, cls=SafeJsonEncoder)}\n\n"
         else:
             yield f"data: {json.dumps({'type': 'complete', 'success': False, 'error': result_container.get('error', 'Training failed')}, cls=SafeJsonEncoder)}\n\n"
 

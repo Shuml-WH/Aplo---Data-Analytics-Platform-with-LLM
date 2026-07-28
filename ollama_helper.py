@@ -4,8 +4,23 @@ import pandas as pd
 import re
 import json
 import os
+import urllib.request
+import urllib.error
 
-OLLAMA_BASE_URL = os.environ.get("OLLAMA_BASE_URL", "http://localhost:11434")
+LOCAL_OLLAMA = "http://host.docker.internal:11434"
+DOCKER_OLLAMA = "http://ollama:11434"
+
+def _resolve_ollama_url():
+    preferred = os.environ.get("OLLAMA_BASE_URL", LOCAL_OLLAMA)
+    if preferred != LOCAL_OLLAMA:
+        return preferred
+    try:
+        urllib.request.urlopen(f"{LOCAL_OLLAMA}/api/tags", timeout=2)
+        return LOCAL_OLLAMA
+    except (urllib.error.URLError, urllib.error.HTTPError, OSError):
+        return DOCKER_OLLAMA
+
+OLLAMA_BASE_URL = _resolve_ollama_url()
 
 model = OllamaLLM(model="llama3.2", base_url=OLLAMA_BASE_URL, num_ctx=4096, num_thread=12, streaming=True)
 
